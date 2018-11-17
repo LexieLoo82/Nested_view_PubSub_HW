@@ -9,21 +9,33 @@ const Movies = function (url){
 
 Movies.prototype.getData = function (){
   const requestHelper = new RequestHelper(this.url);
-  requestHelper.get((data) => this.handleData(data));
+  requestHelper.get((data) => {
+    this.movies = data;
+    console.log('movies.js', data);
+    PubSub.publish('Movies:Data-Ready', this.movies)
+  });
   };
 
-Movies.prototype.handleData = function (data){
-  this.movies = data;
-  PubSub.publish('Movies:Data-Ready', this.movies)
-  PubSub.subscribe('SelectView:change', (event) =>{
-    const selectedMovie = event.detail;
-    this.publishSelectedMovie(selectedMovie);
-  });
-};
 
-Movies.prototype.publishSelectedMovie = function (index){
-  const selectedMovie = this.movies[index];
-  PubSub.publish('Movies:Selected-movie', selectedMovie);
-};
+
+//
+// Movies.prototype.getData = function (){
+//   const requestHelper = new RequestHelper(this.url);
+//   requestHelper.get((data) => this.handleData(data));
+//   };
+//
+// Movies.prototype.handleData = function (data){
+//   this.movies = data;
+//   PubSub.publish('Movies:Data-Ready', this.movies)
+//   PubSub.subscribe('SelectView:change', (event) =>{
+//     const selectedMovie = event.detail;
+//     this.publishSelectedMovie(selectedMovie);
+//   });
+// };
+//
+// Movies.prototype.publishSelectedMovie = function (index){
+//   const selectedMovie = this.movies[index];
+//   PubSub.publish('Movies:Selected-movie', selectedMovie);
+// };
 
 module.exports = Movies;
